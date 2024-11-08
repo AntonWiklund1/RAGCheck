@@ -11,9 +11,20 @@ import time
 from tqdm import tqdm
 
 class TestGenerator:
-    def __init__(self, model="gpt-4o-mini", temperature=0):
+    def __init__(self, model="gpt-4o-mini", temperature=0, input_folder="data/documents/", output_file="data/test.csv"):
         load_dotenv()
         self.llm = ChatOpenAI(model=model, temperature=temperature)
+        self.input_folder = input_folder
+        self.output_file = output_file
+        self._ensure_folder_exists()
+
+    def _ensure_folder_exists(self):
+        """Ensure that input and output folders exist, creating them if necessary."""
+        
+        # Create output folder (extract directory path from output_file)
+        output_dir = os.path.dirname(self.output_file)
+        if output_dir:  # Only create if there's a directory path
+            os.makedirs(output_dir, exist_ok=True)
 
     def create_tests(self, context: str, id: str, num_tests: int = 3):
         """Create multiple test sets for the RAGCheck project.
@@ -25,32 +36,36 @@ class TestGenerator:
             str: The LLM's response containing the questions and answers.
         """
         prompt_template = PromptTemplate.from_template("""
-        task:
-        You are given a task to create a test set for a RAGCheck project.
-        Your goal is to create {num_tests} question and answer pairs based on the provided context.
+task:
+You are given a task to create a test set for a RAGCheck project.
+Your goal is to create {num_tests} challenging question and answer pairs based on the provided context.
 
-        requirements:
-        - The questions must be answerable using the context.
-        - The answers should be directly from the context.
-        - Both questions and answers should match the context's language.
+requirements:
+- All questions must be answerable using the context.
+- The answers should be directly from the context.
+- Both questions and answers should match the context's language.
+- The questions should be diverse and challenging.
+- Questions should require synthesis of information from different parts of the context.
+- Avoid questions that can be answered by a single sentence or fact in the context.
+- Focus on complex concepts, relationships, and deeper understanding.
 
-        context:
-        {context}
+context:
+{context}
 
-        id: {id}
+id: {id}
 
-        output_format:
-        Please provide exactly {num_tests} question-answer pairs in the following format:
+output_format:
+Please provide exactly {num_tests} question-answer pairs in the following format:
 
-        id: {{id}}
-        question_1: <question>
-        answer_1: <answer>
-        question_2: <question>
-        answer_2: <answer>
-        ...etc up to question_{num_tests}/answer_{num_tests}
+id: {{id}}
+question_1: <question>
+answer_1: <answer>
+question_2: <question>
+answer_2: <answer>
+...etc up to question_{num_tests}/answer_{num_tests}
 
-        IMPORTANT: Only output the answer in the specified format.
-        """)
+IMPORTANT: Only output the answer in the specified format.
+""")
         chain = prompt_template | self.llm
 
         # Implement retry logic with exponential backoff
@@ -136,8 +151,8 @@ class TestGenerator:
         return parsed_data
 
     def main(self):
-        input_folder = 'documents/'  # Replace with your folder path
-        output_file = 'output.csv'
+        input_folder = 'data/documents/'  # Replace with your folder path
+        output_file = 'data/test.csv'
         num_tests_per_file = 20
 
         files = glob.glob(os.path.join(input_folder, '*'))
