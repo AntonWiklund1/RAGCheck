@@ -164,3 +164,4 @@ documents/
 .python-version
 .DS_Store
 results/
+data/index_storage/
