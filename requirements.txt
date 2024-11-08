@@ -1,0 +1,8 @@
+python-dotenv
+langchain-openai
+streamlit
+tqdm
+pandas
+plotly
+wikipedia
+tiktoken
