@@ -16,12 +16,12 @@ def main():
     # # Save the index for future use
     rag.save_index()
     
-    # Load the index
+    # Load the index (Only needed if you didn't build and saved the index before)
     rag.load_index()
     
     # Optional: Test a query
-    # response = rag.query("What was the main focus of the CYCLADES project?")
-    # print(response)
+    response = rag.query("Taylor Swift birthplace?")
+    print(response)
 
     # Test the RAG system
     average_score = evaluate_rag_system(
@@ -31,6 +31,8 @@ def main():
         num_tests=100,
         evaluator_model=gemini_1_5_flash
     )
+
+    print(f"Average Score: {average_score:.2f}%")
 
 if __name__ == "__main__":
     main()
