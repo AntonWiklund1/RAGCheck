@@ -223,7 +223,6 @@ def evaluate_rag_system(
         
         pbar.close()
         print(f"\nEvaluation completed. Results saved to: {output_path}")
-        print(f"Average Score: {average_score:.2f}%")
         
         return average_score
         
