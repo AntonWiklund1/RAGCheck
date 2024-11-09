@@ -1,3 +1,5 @@
+![RAGCheck Banner](./assets/banner.png)
+
 # RAGCheck
 
 RAGCheck is a comprehensive tool for evaluating and analyzing the performance of Retrieval Augmented Generation (RAG) systems. It provides automated testing, evaluation metrics, and visualization capabilities to help you understand and improve your RAG implementation.
